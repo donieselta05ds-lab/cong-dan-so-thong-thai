@@ -26,9 +26,32 @@
     </div>
     <div class="start-actions">
       <button class="btn-main" id="startBtn">Bắt đầu</button>
-      <button class="btn-ghost" id="aboutBtn">Giới thiệu</button>
+      <div class="start-row">
+        <button class="btn-ghost" id="lbBtn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg>Bảng xếp hạng</button>
+        <button class="btn-ghost" id="aboutBtn">Giới thiệu</button>
+      </div>
       <p class="foot">15 câu hỏi – 40 giây mỗi câu – tối đa 500 điểm</p>
     </div>
+  </section>
+
+  <!-- REGISTER -->
+  <section class="screen" id="reg" aria-label="Thông tin người chơi">
+    <div class="reg-head">
+      <h2 class="reg-title">Thông tin người chơi</h2>
+      <p class="reg-sub">Điền thông tin để ghi tên lên bảng xếp hạng</p>
+    </div>
+    <form class="reg-form" id="regForm" novalidate>
+      <label class="field"><span>Họ và tên</span>
+        <input id="fName" type="text" autocomplete="name" maxlength="50" placeholder="Nhập họ và tên của bạn"></label>
+      <label class="field"><span>Số điện thoại</span>
+        <input id="fPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10 chữ số, bắt đầu bằng 0"></label>
+      <label class="field"><span>Khu phố</span>
+        <select id="fKp"><option value="">Chọn khu phố</option></select></label>
+      <p class="reg-err" id="regErr" role="alert"></p>
+      <p class="reg-privacy">Số điện thoại chỉ dùng để liên hệ khi trao giải. Trên bảng xếp hạng chỉ hiện 3 số cuối.</p>
+      <button class="btn-main" type="submit">Vào chơi</button>
+      <button class="btn-ghost" type="button" id="regBack">Quay lại</button>
+    </form>
   </section>
 
   <!-- INTRO -->
@@ -71,8 +94,14 @@
     <h2 class="end-title" id="endTitle"></h2>
     <p class="end-score" id="endScore"></p>
     <p class="end-msg" id="endMsg"></p>
+    <div class="end-card">
+      <p class="end-who" id="endWho"></p>
+      <p class="end-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>Tổng thời gian trả lời: <b id="endTime"></b></p>
+      <p class="end-rank" id="endRank"></p>
+    </div>
     <div class="end-actions">
       <button class="btn-main" id="againBtn">Chơi lại</button>
+      <button class="btn-ghost" id="endLbBtn">Xem bảng xếp hạng</button>
       <button class="btn-ghost" id="homeBtn">Về màn hình chính</button>
     </div>
   </section>
@@ -101,8 +130,23 @@
     <button class="btn-ghost" id="hintClose">Cảm ơn Tổ công nghệ số</button>
   </div>
 </div>
+<div class="overlay" id="lbOv" role="dialog" aria-modal="true" aria-labelledby="lbH">
+  <div class="panel lb-panel">
+    <div class="lb-head">
+      <h2 id="lbH">Bảng xếp hạng</h2>
+      <span class="lb-count" id="lbCount"></span>
+    </div>
+    <p class="lb-rule">Điểm cao xếp trên. Bằng điểm thì ai trả lời nhanh hơn xếp trên.</p>
+    <p class="lb-note" id="lbNote"></p>
+    <ol class="lb-list" id="lbList"></ol>
+    <p class="lb-me" id="lbMe"></p>
+    <button class="btn-ghost" data-close="lbOv">Đóng</button>
+  </div>
+</div>
 <canvas id="fx"></canvas>
 
+<script src="js/config.js"></script>
+<script src="js/leaderboard.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

@@ -143,9 +143,10 @@ $("aboutBtn").onclick=()=>{ Snd.init(); Snd.click(); openOv("aboutOv") };
 
 /* ---------- game state ---------- */
 let G=null, timerRAF=null, deadline=0, remain=TIME, paused=false, lastSec=TIME;
+let runStart=0; /* đếm tổng thời gian trả lời (ẩn, chỉ hiện ở màn kết quả) */
 function newGame(){
   const pools={}; for(const k of ["de","tb","kho"]) pools[k]=shuffle(QB[k].map((q,i)=>({...q,id:k+i})));
-  G={pools, used:new Set(), idx:0, score:0, lives:{fifty:true,swap:true,cns:true}, q:null, locked:false};
+  G={pools, used:new Set(), idx:0, score:0, lives:{fifty:true,swap:true,cns:true}, q:null, locked:false, ms:0};
 }
 function levelOf(i){ return i<5?"de":i<10?"tb":"kho" }
 function drawQuestion(){ const lv=levelOf(G.idx); const q=G.pools[lv].find(x=>!G.used.has(x.id)); G.used.add(q.id); return q }
@@ -167,12 +168,13 @@ function renderQ(){
 
 /* timer */
 const CIRC=2*Math.PI*28; $("ring").style.strokeDasharray=CIRC;
-function startTimer(sec=TIME){ remain=sec; deadline=performance.now()+sec*1000; paused=false; lastSec=Math.ceil(sec); cancelAnimationFrame(timerRAF); loop() }
+function startTimer(sec=TIME){ stopTimer(); remain=sec; deadline=performance.now()+sec*1000; paused=false; lastSec=Math.ceil(sec); runStart=performance.now(); loop() }
 function loop(){ const left=Math.max(0,(deadline-performance.now())/1000); remain=left; paintTimer(left);
   const s=Math.ceil(left); if(s!==lastSec){ lastSec=s; if(s<=10&&s>0) Snd.tick() }
   if(left<=0){ timeUp(); return } timerRAF=requestAnimationFrame(loop) }
 function paintTimer(left){ $("tNum").textContent=Math.ceil(left); $("ring").style.strokeDashoffset=CIRC*(1-left/TIME); $("timer").classList.toggle("low",left<=10) }
-function stopTimer(){ cancelAnimationFrame(timerRAF); timerRAF=null }
+function stopTimer(){ cancelAnimationFrame(timerRAF); timerRAF=null;
+  if(runStart && G){ G.ms+=Math.min(performance.now(),deadline)-runStart } runStart=0 }
 function pauseTimer(){ if(timerRAF){ stopTimer(); paused=true } }
 function resumeTimer(){ if(paused && !G.locked){ startTimer(remain) } }
 document.addEventListener("visibilitychange",()=>{ if(document.hidden) pauseTimer(); else if($("game").classList.contains("on") && !$("hintOv").classList.contains("on")) resumeTimer() });
@@ -270,7 +272,10 @@ function finish(){ stopTimer(); Snd.music(false); const correct=G.idx+(G.score==
     cit.classList.add("sitting","cheer"); Snd.applause(2.4,70) }
   else { title="Chúc bạn may mắn lần sau!"; msg="Mỗi ngày học thêm một kỹ năng số, bạn sẽ là công dân số thông thái."; cit.classList.add("sitting") }
   $("endTitle").textContent=title; $("endScore").innerHTML=`${G.score}<small>điểm</small>`; $("endMsg").textContent=msg;
-  show("end") }
-$("startBtn").onclick=startGame;
-$("againBtn").onclick=()=>{ fxRun=false; startGame() };
+  show("end"); LB.onFinish({score:G.score, correct, ms:G.ms}) }
+$("startBtn").onclick=()=>{ Snd.init(); Snd.click(); LB.openReg() };
+LB.bindReg(startGame);
+$("lbBtn").onclick=()=>{ Snd.init(); Snd.click(); LB.openBoard() };
+$("endLbBtn").onclick=()=>{ Snd.click(); LB.openBoard() };
+$("againBtn").onclick=()=>{ fxRun=false; if(LB.hasPlayer()) startGame(); else LB.openReg() };
 $("homeBtn").onclick=()=>{ fxRun=false; Snd.click(); show("start") };
