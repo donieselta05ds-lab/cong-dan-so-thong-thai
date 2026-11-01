@@ -8,7 +8,7 @@
 const LB_URL = "https://script.google.com/macros/s/AKfycbxjZFadCyf0WgqleUukOBoeMNbyTl3EgIa8ZyELt-OO5DOnbGcrvI-3FNYoj8jJpVCl/exec";
 
 /* Số người hiện trên bảng xếp hạng */
-const LB_TOP = 20;
+const LB_TOP = 102;
 
 /* 50 khu phố theo Nghị quyết số 12/NQ-HĐND ngày 22/6/2026 của HĐND phường Gia Định
    (số thứ tự không liên tục – giữ đúng số theo Nghị quyết) */
