@@ -242,7 +242,7 @@ button:focus-visible{outline:3px solid var(--gold); outline-offset:3px}
 .lb-note:empty{display:none}
 .lb-list{list-style:none; margin:12px 0 4px; padding:0 2px; display:flex; flex-direction:column; gap:7px; overflow-y:auto; min-height:0; flex:1}
 .lb-empty{padding:26px 10px; text-align:center; color:var(--ink-dim); font-size:15px}
-.lb-row{position:relative; display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:10px; padding:8px 12px 8px 8px; border-radius:14px;
+.lb-row{flex:none; position:relative; display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:10px; padding:8px 12px 8px 8px; border-radius:14px;
   background:rgba(14,42,102,.85); border:1.5px solid rgba(63,214,232,.25); overflow:hidden;
   animation:lbIn .4s cubic-bezier(.2,.8,.2,1) both; animation-delay:var(--d,0ms)}
 @keyframes lbIn{from{opacity:0; transform:translateY(10px)}}

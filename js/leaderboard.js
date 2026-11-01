@@ -72,11 +72,9 @@ const LB = (() => {
     store.set(KEY_PENDING, left);
   }
   function localBoard(){
-    const best = {};
-    for (const r of store.get(KEY_LOCAL, [])){ const b = best[r.phone]; if (!b || cmp(r, b) < 0) best[r.phone] = r }
-    const list = Object.values(best).sort(cmp);
+    const list = store.get(KEY_LOCAL, []).slice().sort(cmp);
     return { count:list.length, top:list.slice(0, LB_TOP).map(r => ({ name:r.name, kp:r.kp, phone:mask(r.phone), score:r.score, ms:r.ms })),
-             rankOf: ph => list.findIndex(r => r.phone === ph) + 1 };
+             rankOf: ph => { let at = -1, k = 0; list.forEach((r, i) => { if (r.phone === ph && (r.at || 0) >= at){ at = r.at || 0; k = i + 1 } }); return k } };
   }
   async function submit(rec){
     if (!LB_URL){
@@ -103,7 +101,7 @@ const LB = (() => {
   /* ---------- vẽ bảng xếp hạng ---------- */
   const isMe = r => player && r.name === player.name && Number(r.kp) === Number(player.kp) && String(r.phone).slice(-3) === player.phone.slice(-3);
   function renderBoard(data){
-    el("lbCount").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .7 3.3 2.4 3.6 5.2"/></svg><span>${Number(data.count || 0).toLocaleString("vi-VN")}</span> người chơi`;
+    el("lbCount").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .7 3.3 2.4 3.6 5.2"/></svg><span>${Number(data.count || 0).toLocaleString("vi-VN")}</span> lượt chơi`;
     el("lbNote").textContent = data.local ? "Đang chạy thử: bảng xếp hạng chỉ lưu trên máy này." : "";
     const ol = el("lbList"); ol.innerHTML = "";
     if (!data.top.length){ ol.innerHTML = '<li class="lb-empty">Chưa có người chơi nào. Hãy là người đầu tiên!</li>'; return }
@@ -120,8 +118,8 @@ const LB = (() => {
   }
   async function openBoard(){
     el("lbList").innerHTML = '<li class="lb-empty">Đang tải bảng xếp hạng…</li>';
-    el("lbCount").innerHTML = '<span>…</span> người chơi'; el("lbNote").textContent = "";
-    el("lbMe").textContent = lastRank ? `Thành tích tốt nhất của bạn: hạng ${lastRank}` : "";
+    el("lbCount").innerHTML = '<span>…</span> lượt chơi'; el("lbNote").textContent = "";
+    el("lbMe").textContent = lastRank ? `Lượt chơi vừa rồi của bạn: hạng ${lastRank}` : "";
     openOv("lbOv");
     try { renderBoard(await fetchBoard()) }
     catch(_){ el("lbList").innerHTML = '<li class="lb-empty">Chưa tải được bảng xếp hạng. Vui lòng kiểm tra mạng và thử lại.</li>' }
@@ -136,8 +134,8 @@ const LB = (() => {
     try {
       const res = await submit({ name:player.name, phone:player.phone, kp:player.kp, score, correct, ms:Math.round(ms) });
       lastRank = res.rank;
-      if (res.rank >= 1 && res.rank <= 3){ rk.classList.add("medal-line"); rk.innerHTML = star(res.rank) + `<span>Bạn đang đứng <b>hạng ${res.rank}</b> trên ${res.count} người chơi!</span>` }
-      else rk.innerHTML = `Thành tích tốt nhất của bạn đang đứng <b>hạng ${res.rank}</b> trên ${res.count} người chơi.`;
+      if (res.rank >= 1 && res.rank <= 3){ rk.classList.add("medal-line"); rk.innerHTML = star(res.rank) + `<span>Lượt chơi này đứng <b>hạng ${res.rank}</b> trên ${res.count} lượt chơi!</span>` }
+      else rk.innerHTML = `Lượt chơi này đứng <b>hạng ${res.rank}</b> trên ${res.count} lượt chơi.`;
     } catch(_){
       rk.textContent = "Chưa gửi được kết quả (mất mạng?). Kết quả sẽ tự gửi lại ở lần mở game sau.";
     }
